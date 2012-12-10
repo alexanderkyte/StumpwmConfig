@@ -1,0 +1,57 @@
+;; Great guide: http://www.mygooglest.com/fni/stumpwm.html
+
+(in-package :stumpwm)
+
+(require 'swank)
+
+(defcommand swank ()
+(swank-loader:init)
+  (setf stumpwm:*top-level-error-action* :break)
+  (swank:create-server :port 4005
+                       :style swank:*communication-style*
+                       :dont-close t)
+  (echo-string
+   (current-screen)
+   "Starting swank. M-x slime-connect RET RET, then (in-package stumpwm)."))
+(swank)
+
+;; Customize bars and modeline.
+(setf *message-window-gravity* :center)
+(setf *input-window-gravity* :center)
+
+;; Turn on mode line.
+(toggle-mode-line (current-screen) (current-head))
+(setf *screen-mode-line-format* 
+      (list "%w | "
+            '(:eval (run-shell-command "date | tr -d '[:cntrl:]'" t))
+	    ))
+
+(set-prefix-key (kbd "F20"))
+
+;; meta-hjkl
+(define-key *top-map* (kbd "M-k") "move-focus up")
+(define-key *top-map* (kbd "M-j") "move-focus down")
+(define-key *top-map* (kbd "M-l") "move-focus right")
+(define-key *top-map* (kbd "M-h") "move-focus left")
+
+;; control-meta-hjkl
+(define-key *top-map* (kbd "C-M-k") "move-window up")
+(define-key *top-map* (kbd "C-M-j") "move-window down")
+(define-key *top-map* (kbd "C-M-l") "move-window right")
+(define-key *top-map* (kbd "C-M-h") "move-window left")
+
+;; (set-font "-*-FreeMono-medium-r-*-*-6*")
+(set-font "-adobe-helvetica-medium-r-normal--10*")
+
+
+(define-key *root-map* (kbd "p")
+  "exec dmenu_run -i -b -p \"run command:\"")
+
+(defcommand urxvt () ()
+  "Start an urxvt instance or switch to it, if it is already running."
+  (run-or-raise "urxvt" '(:instance "urxvt")))
+(define-key *root-map* (kbd "c") "urxvt")
+
+(defcommand firefox () ()
+  "Start firefox."
+  (run-or-raise "firefox" '(:instance "firefox")))
