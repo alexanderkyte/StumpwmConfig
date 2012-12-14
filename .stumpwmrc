@@ -42,7 +42,8 @@
 
 ;; (set-font "-*-FreeMono-medium-r-*-*-6*")
 (set-font "-adobe-helvetica-medium-r-normal--10*")
-
+(setf *normal-border-width* 0)
+(set-msg-border-width 0)
 
 (define-key *root-map* (kbd "p")
   "exec dmenu_run -i -b -p \"run command:\"")
